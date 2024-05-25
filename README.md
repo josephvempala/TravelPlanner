@@ -2,8 +2,8 @@
 A Travel Planning app that uses generative AI to find popular places to visit in a city.
 
 ## Prerequisites
-NodeJS v21^
-Bun v1^
+- NodeJS v21^
+- Bun v1^
 
 ## Installation
 ### Quickstart
