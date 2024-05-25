@@ -34,7 +34,7 @@ connect().then((db) => {
       category TEXT NOT NULL,
       image_url TEXT,
       rating REAL,
-      city_id INTEGER References city(id)
+      city_id INTEGER References city(id) ON DELETE CASCADE
     );
   `);
 });

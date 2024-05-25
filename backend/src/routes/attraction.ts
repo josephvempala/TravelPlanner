@@ -1,5 +1,6 @@
 import { Hono } from "hono";
-import * as attractions from "../controllers/attractions";
+import * as attraction from "../controllers/attraction";
+import * as city from "../controllers/city";
 
 const app = new Hono();
 
@@ -11,20 +12,11 @@ app
         c.status(400);
         return c.json({ message: "City is required" });
       }
-      const response = await attractions.getNewAttractions(city);
+      const response = await attraction.getNewAttractions(city);
       if (!response) {
         c.status(404);
         return c.json({ message: "No attractions found for " + city });
       }
-      return c.json(response);
-    } catch (e: any) {
-      c.status(500);
-      return c.json(e);
-    }
-  })
-  .get("/cities", async (c) => {
-    try {
-      const response = await attractions.getCities();
       return c.json(response);
     } catch (e: any) {
       c.status(500);
@@ -38,7 +30,7 @@ app
         c.status(400);
         return c.json({ message: "City ID is a number" });
       }
-      const response = await attractions.getAttractionsByCity(cityId);
+      const response = await attraction.getAttractionsByCity(cityId);
       if (!response) {
         c.status(404);
         return c.json({ message: "No attractions found for the city" });
@@ -56,7 +48,7 @@ app
         c.status(400);
         return c.json({ message: "ID is a number" });
       }
-      await attractions.deleteAttraction(id);
+      await attraction.deleteAttraction(id);
       return c.json({ message: "Attraction deleted" });
     } catch (e: any) {
       c.status(500);

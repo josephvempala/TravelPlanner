@@ -1,6 +1,6 @@
 import { openai } from "../config/openAI";
 import { Attraction } from "../types/attraction";
-import * as attractionsModel from "../models/attractions";
+import * as attractionsModel from "../models/attraction";
 
 async function generateAttractionByCity(
   city: string
@@ -71,14 +71,6 @@ export async function getAttractionsByCity(
     throw new Error("No attractions found for the city");
   }
   return attractions;
-}
-
-export async function getCities(): Promise<{ name: string; id: number }[]> {
-  const cities = await attractionsModel.getCities();
-  if (!cities) {
-    throw new Error("No cities found");
-  }
-  return cities;
 }
 
 export async function deleteAttraction(id: number): Promise<void> {

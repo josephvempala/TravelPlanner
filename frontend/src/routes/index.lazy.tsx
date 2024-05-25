@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Navigate, createLazyFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import React from "react";
-import { generateAttractions, getAllCities } from "../services/api/attractions";
+import { generateAttractions } from "../services/api/attractions";
+import { deleteCity, getAllCities } from "../services/api/cities";
 import { Link } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute("/")({
@@ -10,17 +11,27 @@ export const Route = createLazyFileRoute("/")({
 
 function Index() {
   const queryClient = useQueryClient();
+  const navigator = useNavigate({
+    from: "/",
+  });
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["cities"],
     queryFn: getAllCities,
   });
 
-  const { isPending, mutate } = useMutation({
+  const generateAttractionsMutation = useMutation({
     mutationFn: generateAttractions,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["cities"] });
-      Navigate({ to: `/${data.cityId}` });
+      navigator({ to: "/$cityId", params: { cityId: data.cityId } });
+    },
+  });
+
+  const deleteCityMutation = useMutation({
+    mutationFn: deleteCity,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cities"] });
     },
   });
 
@@ -28,7 +39,7 @@ function Index() {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const city = formData.get("city") as string;
-    mutate(city);
+    generateAttractionsMutation.mutate(city);
   };
 
   return (
@@ -38,15 +49,22 @@ function Index() {
         <input type="text" name="city" placeholder="Search for a city" />
         <button type="submit">Search</button>
       </form>
-      {(isLoading || isPending) && <p>Loading...</p>}
+      {(isLoading || generateAttractionsMutation.isPending) && (
+        <p>Loading...</p>
+      )}
       {isError && <p>An error has occurred while getting cities to visit</p>}
       {data && (
         <ul>
           {data.map((city) => (
             <li key={city.id}>
-              <Link to="/$cityId" params={{ cityId: city.id }}>
-                {city.name}
-              </Link>
+              <div>
+                <Link to="/$cityId" params={{ cityId: city.id }}>
+                  {city.name}
+                </Link>
+                <button onClick={() => deleteCityMutation.mutate(city.id)}>
+                  Delete
+                </button>
+              </div>
             </li>
           ))}
         </ul>

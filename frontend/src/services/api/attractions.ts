@@ -1,13 +1,6 @@
 import axios from "axios";
 import { Attraction } from "../../../../backend/src/types/attraction";
 
-export const getAllCities = async (): Promise<
-  { name: string; id: string }[]
-> => {
-  const data = await axios.get("/api/v1/attractions/cities");
-  return data.data;
-};
-
 export const getAttractionsByCity = async (
   cityId: number
 ): Promise<Attraction[]> => {

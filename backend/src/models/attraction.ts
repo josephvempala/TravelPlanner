@@ -2,22 +2,15 @@ import { connect } from "../config/db";
 
 import { Attraction } from "../types/attraction";
 
-export async function getById(id: number): Promise<Attraction | undefined> {
+export async function getAttractionById(
+  id: number
+): Promise<Attraction | undefined> {
   const db = await connect();
   const attraction = await db.get("SELECT * FROM attractions WHERE id = ?", [
     id,
   ]);
   db.close();
   return attraction as Attraction | undefined;
-}
-
-export async function getCities(): Promise<
-  { name: string; id: number }[] | undefined
-> {
-  const db = await connect();
-  const cities = await db.all("SELECT * FROM city");
-  db.close();
-  return cities as { name: string; id: number }[] | undefined;
 }
 
 export async function getAttractionsByCity(
